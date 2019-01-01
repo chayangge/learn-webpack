@@ -26,7 +26,7 @@ index.html:
 ```
 webpack app.js
 ```
-会发现dist文件夹下多了一份打包好的main.js，且是压缩后的，并受到一条报警：
+会发现dist文件夹下多了一份打包好的main.js，且是压缩后的，并收到一条报警：
 > WARNING in configuration
 The 'mode' option has not been set, webpack will fallback to 'production' for this value. Set 'mode' option to 'development' or 'production' to enable defaults for each environment.
 You can also set it to 'none' to disable any default behavior. Learn more: https://webpack.js.org/concepts/mode/
@@ -166,4 +166,58 @@ __webpack_require__作为模块加载函数，各模块在modules[moduleId].call
 var _a_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./a.js */ \"./a.js\");\n\n_a_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].log('test');
 ```
 用以声明依赖了a.js。
+注：在webpack3版本中打包的模块是以数组方式传入，详见(!bundle.js分析)[https://juejin.im/entry/599ad614f265da24934af5ba]
 
+### webpack.config.js
+执行webpack命令是，会默认寻找当前目录下的webpack.config.js文件，这里新建src目录，新建index.js
+```
+const path = require('path');
+
+module.exports = {
+    entry: './src/app.js',                           // 入口文件
+    output: {                                             // webpack打包后出口文件
+        filename: 'main.js',                             // 打包后js文件名称
+        path: path.resolve(__dirname, 'dist')    // 打包后自动输出目录
+    }
+}
+```
+此时执行webpack会根据config的内容进行打包，也可写入package.json 脚本命令：
+```
+"scripts": {
+    "build": "webpack"
+}
+```
+开发环境用本地的index.html，构建后在dist目录也要生成一份完整的项目结构，此时的index.html需要html-webpack-plugin插件实现:
+```
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin'); // 引入插件
+module.exports = {
+    entry: './src/index.js', // 入口文件
+    output: { // webpack打包后出口文件
+        filename: 'app.js', // 打包后js文件名称
+        path: path.resolve(__dirname, 'dist') // 打包后自动输出目录
+    },
+
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: 'production',
+            inject: true, // script标签插入位置：head body false
+            minify: {
+                removeAttributeQuotes: false // 去除属性标签，并不需要
+            }
+            //chunks: ['index','main']  // 多个script
+        })
+    ]
+};
+
+```
+### 安装react，react-router
+我们书写的react业务代码都是jsx格式（虽然文件可能依然为js）这需要babel转换，babel-preset-react专门把jsx转为js，而babel-loader作为webpack的babe转换loader，总之安装：
+- babel-croe 为babel核心文件
+- babel-preset-env 将ES6转义成ES5
+- babel-preset-react 将JSX转义成js
+- babel-loader webpack的babe转换
+npm install babel-core babel-preset-env babel-preset-react babel-loader --save-dev
+
+### .babelrc配置文件
+bable的核心配置文件，在根部录下自动识别。
