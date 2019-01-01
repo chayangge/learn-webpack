@@ -1,17 +1,16 @@
-/**
- * 通用弹层统一容器
- */
+
 import React, { Component } from 'react';
 
 class Hello extends Component {
-    componentWillMount () {
-
+    goAbout = () => {
+        console.log(this.props);
+        this.props.history.push('/about');
     };
 
     render () {
         return (
             <div>
-                <h1>11hello</h1>
+                <h1 onClick={this.goAbout}>hello word</h1>
             </div>
         );
     };

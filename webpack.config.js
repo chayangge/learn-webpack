@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin'); // 引入插件
 module.exports = {
     entry: './src/index.js', // 入口文件
@@ -34,6 +35,13 @@ module.exports = {
                 removeAttributeQuotes: false
             }
             // chunks: ['app', 'main']  //多个script
-        })
-    ]
+        }),
+        // hot 检测文件改动替换plugin
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin()
+    ],
+    devServer: {
+        contentBase: './dist',
+        hot: true
+    }
 };

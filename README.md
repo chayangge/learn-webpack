@@ -221,3 +221,98 @@ npm install babel-core babel-preset-env babel-preset-react babel-loader --save-d
 
 ### .babelrc配置文件
 bable的核心配置文件，在根部录下自动识别。
+
+
+### dev环境热更新
+
+```
+npm install webpack-dev-server  --save-dev
+```
+
+package.json添加命令：
+```
+"scripts": {
+    "build": "webpack",
+    "dev": "webpack-dev-server --open --mode development"
+  }
+```
+
+npm run dev即可开启热更新
+### react-router
+
+安装：react-router-dom
+
+新建 about页面，更改index：
+```
+
+import {
+    BrowserRouter as Router,
+    Route,
+    HashRouter,
+    Switch
+} from 'react-router-dom';
+import React from 'react';
+import ReactDom from 'react-dom';
+import Hello from './hello.js';
+import About from './about.js';
+import './index.css';
+
+ReactDom.render((
+    <Router>
+        <Switch>
+            <Route exact path="/" component={Hello} />
+            <Route exact path="/about" component={About} />
+        </Switch>
+    </Router>
+), document.getElementById('app'));
+
+```
+
+react-router有两种方式BrowserRouter和HashRouter，可以轮换尝试，下面是about.js:
+```
+import React, { Component } from 'react';
+
+class About extends Component {
+    goHome = () => {
+        console.log(this.props);
+        this.props.history.push('/');
+    };
+
+    render () {
+        return (
+            <div>
+                <h1 onClick={this.goHome}>这是关于页</h1>
+            </div>
+        );
+    };
+};
+
+export default About;
+```
+
+hello.js：
+
+```
+
+import React, { Component } from 'react';
+
+class Hello extends Component {
+    goAbout = () => {
+        console.log(this.props);
+        this.props.history.push('/about');
+    };
+
+    render () {
+        return (
+            <div>
+                <h1 onClick={this.goAbout}>hello word</h1>
+            </div>
+        );
+    };
+};
+
+export default Hello;
+
+```
+
+这样实现两页面切换。
